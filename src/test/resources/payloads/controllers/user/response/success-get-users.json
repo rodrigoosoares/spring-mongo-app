@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "firstName": "Alis",
+      "lastName": "Landale",
+      "email": "alis@email.com",
+      "birthDate": "1987-12-20",
+      "status": "Active"
+    }
+  ]
+}

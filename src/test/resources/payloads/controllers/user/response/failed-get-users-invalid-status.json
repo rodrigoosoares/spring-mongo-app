@@ -1,0 +1,6 @@
+{
+  "status": 400,
+  "errors": [
+    "Invalid status. Should be 'active' or 'deleted'."
+  ]
+}
