@@ -117,19 +117,19 @@ class UserRepositoryIntegrationTest {
         //Given
         mongoOperations.insert(mockData(), COLLECTION_NAME);
 
-        final UserEntity userEntityToinsert = new UserEntity();
-        userEntityToinsert.setFirstName("user1-updated");
-        userEntityToinsert.setLastName("01-updated");
-        userEntityToinsert.setEmail("user-1-updated@email.com");
-        userEntityToinsert.setBirthDate(LocalDate.parse("2022-01-22"));
-        userEntityToinsert.setStatus("deleted");
+        final UserEntity userEntityToInsert = new UserEntity();
+        userEntityToInsert.setFirstName("user5");
+        userEntityToInsert.setLastName("05");
+        userEntityToInsert.setEmail("user-5@email.com");
+        userEntityToInsert.setBirthDate(LocalDate.parse("2022-01-22"));
+        userEntityToInsert.setStatus("deleted");
 
         // When
-        userRepository.upsert(userEntityToinsert);
+        userRepository.upsert(userEntityToInsert);
 
         // Then
         final List<UserEntity> updatedDocumentFind = mongoOperations.find(
-                new Query().addCriteria(Criteria.where("firstName").is(userEntityToinsert.getFirstName())),
+                new Query().addCriteria(Criteria.where("firstName").is(userEntityToInsert.getFirstName())),
                 UserEntity.class,
                 COLLECTION_NAME
         );

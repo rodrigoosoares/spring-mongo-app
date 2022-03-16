@@ -78,7 +78,7 @@ class UserControllerIntegrationTest {
                         .lastName("Landale")
                         .email("alis@email.com")
                         .birthDate(LocalDate.parse("1987-12-20"))
-                        .status("Active")
+                        .status("active")
                         .build());
     }
 }

@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.database.repository.UserRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 
@@ -31,7 +33,7 @@ class UserGatewayTest {
     private UserGateway userGateway;
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should return a list of users from repository")
     void shouldReturnListOfUsersFromRepository() {
 
         // Given
@@ -51,6 +53,29 @@ class UserGatewayTest {
         assertThat(result.get(0).getBirthDate(), is(LocalDate.parse("1987-12-20")));
         assertThat(result.get(0).getStatus(), is("Active"));
 
+    }
+
+    @Test
+    @DisplayName("Should call repository upsert method when receive valid UserUpsertRequest")
+    void shouldCallRepositoryUpsertMethodWhenReceiveValidUserUpsertRequest() {
+
+        // Given
+        final UserUpsertRequest userUpsertRequest = mockUserUpsertRequest();
+
+        // When
+        userGateway.insertOrUpdateUser(userUpsertRequest);
+
+        // Then
+        Mockito.verify(userRepository, times(1)).upsert(any(UserEntity.class));
+    }
+
+    private UserUpsertRequest mockUserUpsertRequest() {
+        return UserUpsertRequest.builder()
+                .firstName("Alis")
+                .lastName("Landale")
+                .email("alis@email.com")
+                .birthDate(LocalDate.parse("1987-12-20"))
+                .build();
     }
 
     private List<UserEntity> mockUsersFromRepository() {

@@ -3,6 +3,8 @@ package poc.mongo.mongoapp.database.gateways;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import poc.mongo.mongoapp.adapters.UserDTOAdapter;
+import poc.mongo.mongoapp.adapters.UserEntityAdapter;
+import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.repository.UserRepository;
 import poc.mongo.mongoapp.rest.models.UserDTO;
 
@@ -21,6 +23,13 @@ public class UserGateway {
     public List<UserDTO> getUsers(final String status) {
 
         return UserDTOAdapter.fromUserEntityList(userRepository.findUsersByStatus(status));
+    }
+
+    public void insertOrUpdateUser(final UserUpsertRequest userUpsertRequest) {
+
+        userRepository.upsert(
+                UserEntityAdapter.fromUserUpsertRequest(userUpsertRequest)
+        );
     }
 
 }
