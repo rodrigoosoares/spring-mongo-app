@@ -28,10 +28,19 @@ public class UserController {
         return ResponseEntity.ok(UsersResponseAdapter.fromUserDTO(userGateway.getUsers(status)));
     }
 
+    @PostMapping
+    public ResponseEntity<Void> createUser(@RequestBody final UserUpsertRequest userUpsertRequest) {
+
+        userGateway.insertUser(userUpsertRequest);
+
+        return ResponseEntity.accepted().build();
+
+    }
+
     @PutMapping
     public ResponseEntity<Void> upsertUser(@RequestBody final UserUpsertRequest userUpsertRequest) {
 
-        userGateway.insertOrUpdateUser(userUpsertRequest);
+        userGateway.updateUser(userUpsertRequest);
 
         return ResponseEntity.accepted().build();
 

@@ -14,6 +14,5 @@ public class UserUpsertRequest {
     private String lastName;
     private String email;
     private LocalDate birthDate;
-    private String status;
 
 }

@@ -56,17 +56,31 @@ class UserGatewayTest {
     }
 
     @Test
-    @DisplayName("Should call repository upsert method when receive valid UserUpsertRequest")
+    @DisplayName("Should call repository insert method when receive valid UserUpsertRequest")
     void shouldCallRepositoryUpsertMethodWhenReceiveValidUserUpsertRequest() {
 
         // Given
         final UserUpsertRequest userUpsertRequest = mockUserUpsertRequest();
 
         // When
-        userGateway.insertOrUpdateUser(userUpsertRequest);
+        userGateway.insertUser(userUpsertRequest);
 
         // Then
-        Mockito.verify(userRepository, times(1)).upsert(any(UserEntity.class));
+        Mockito.verify(userRepository, times(1)).insert(any(UserEntity.class));
+    }
+
+    @Test
+    @DisplayName("Should call repository update method when receive valid UserUpsertRequest")
+    void shouldCallRepositoryUpdateMethodWhenReceiveValidUserUpsertRequest() {
+
+        // Given
+        final UserUpsertRequest userUpsertRequest = mockUserUpsertRequest();
+
+        // When
+        userGateway.updateUser(userUpsertRequest);
+
+        // Then
+        Mockito.verify(userRepository, times(1)).update(any(UserEntity.class));
     }
 
     private UserUpsertRequest mockUserUpsertRequest() {

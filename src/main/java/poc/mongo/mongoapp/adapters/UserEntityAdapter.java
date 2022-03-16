@@ -15,7 +15,6 @@ public class UserEntityAdapter {
         userEntity.setLastName(userUpsertRequest.getLastName());
         userEntity.setEmail(userUpsertRequest.getEmail());
         userEntity.setBirthDate(userUpsertRequest.getBirthDate());
-        userEntity.setStatus(userUpsertRequest.getStatus());
 
         return userEntity;
 

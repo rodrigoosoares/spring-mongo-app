@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import poc.mongo.mongoapp.adapters.UserDTOAdapter;
 import poc.mongo.mongoapp.adapters.UserEntityAdapter;
 import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
+import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.repository.UserRepository;
 import poc.mongo.mongoapp.rest.models.UserDTO;
 
@@ -25,9 +26,17 @@ public class UserGateway {
         return UserDTOAdapter.fromUserEntityList(userRepository.findUsersByStatus(status));
     }
 
-    public void insertOrUpdateUser(final UserUpsertRequest userUpsertRequest) {
+    public void insertUser(final UserUpsertRequest userUpsertRequest) {
 
-        userRepository.upsert(
+        final UserEntity userEntity = UserEntityAdapter.fromUserUpsertRequest(userUpsertRequest);
+        userEntity.setStatus("active");
+
+        userRepository.insert(userEntity);
+    }
+
+    public void updateUser(final UserUpsertRequest userUpsertRequest) {
+
+        userRepository.update(
                 UserEntityAdapter.fromUserUpsertRequest(userUpsertRequest)
         );
     }

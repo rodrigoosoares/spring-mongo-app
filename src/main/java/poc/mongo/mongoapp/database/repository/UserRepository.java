@@ -31,7 +31,12 @@ public class UserRepository {
         return mongoOperations.find(query, UserEntity.class, COLLECTION_NAME);
     }
 
-    public void upsert(final UserEntity userEntity) {
+    public void insert(final UserEntity userEntity) {
+
+        mongoOperations.insert(userEntity, COLLECTION_NAME);
+    }
+
+    public void update(final UserEntity userEntity) {
 
         final Query query = new Query();
         query.addCriteria(Criteria.where("email").is(userEntity.getEmail()));
@@ -41,9 +46,8 @@ public class UserRepository {
         update.set("lastName", userEntity.getLastName());
         update.set("email", userEntity.getEmail());
         update.set("birthDate", userEntity.getBirthDate());
-        update.set("status", userEntity.getStatus());
 
-        mongoOperations.upsert(query, update, COLLECTION_NAME);
+        mongoOperations.updateFirst(query, update, COLLECTION_NAME);
     }
 
 }

@@ -122,10 +122,10 @@ class UserRepositoryIntegrationTest {
         userEntityToInsert.setLastName("05");
         userEntityToInsert.setEmail("user-5@email.com");
         userEntityToInsert.setBirthDate(LocalDate.parse("2022-01-22"));
-        userEntityToInsert.setStatus("deleted");
+        userEntityToInsert.setStatus("active");
 
         // When
-        userRepository.upsert(userEntityToInsert);
+        userRepository.insert(userEntityToInsert);
 
         // Then
         final List<UserEntity> updatedDocumentFind = mongoOperations.find(
@@ -137,11 +137,11 @@ class UserRepositoryIntegrationTest {
         assertThat(updatedDocumentFind.size(), Is.is(1));
 
         final UserEntity updatedDocument = updatedDocumentFind.get(0);
-        assertThat(updatedDocument.getFirstName(), Is.is("user1-updated"));
-        assertThat(updatedDocument.getLastName(), Is.is("01-updated"));
-        assertThat(updatedDocument.getEmail(), Is.is("user-1-updated@email.com"));
+        assertThat(updatedDocument.getFirstName(), Is.is("user5"));
+        assertThat(updatedDocument.getLastName(), Is.is("05"));
+        assertThat(updatedDocument.getEmail(), Is.is("user-5@email.com"));
         assertThat(updatedDocument.getBirthDate(), Is.is(LocalDate.parse("2022-01-22")));
-        assertThat(updatedDocument.getStatus(), Is.is("deleted"));
+        assertThat(updatedDocument.getStatus(), Is.is("active"));
     }
 
     @Test
@@ -156,10 +156,9 @@ class UserRepositoryIntegrationTest {
         userEntityToUpdate.setLastName("01-updated");
         userEntityToUpdate.setEmail("user-1@email.com");
         userEntityToUpdate.setBirthDate(LocalDate.parse("2022-01-22"));
-        userEntityToUpdate.setStatus("deleted");
 
         // When
-        userRepository.upsert(userEntityToUpdate);
+        userRepository.update(userEntityToUpdate);
 
         // Then
         final List<UserEntity> updatedDocumentFind = mongoOperations.find(
@@ -175,7 +174,7 @@ class UserRepositoryIntegrationTest {
         assertThat(updatedDocument.getLastName(), Is.is("01-updated"));
         assertThat(updatedDocument.getEmail(), Is.is("user-1@email.com"));
         assertThat(updatedDocument.getBirthDate(), Is.is(LocalDate.parse("2022-01-22")));
-        assertThat(updatedDocument.getStatus(), Is.is("deleted"));
+        assertThat(updatedDocument.getStatus(), Is.is("active"));
     }
 
     private List<UserEntity> mockData() {
