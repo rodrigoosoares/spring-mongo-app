@@ -83,6 +83,20 @@ class UserGatewayTest {
         Mockito.verify(userRepository, times(1)).update(any(UserEntity.class));
     }
 
+    @Test
+    @DisplayName("Should call repository inactiveUser method when receive valid email")
+    void shouldCallRepositoryInactiveUserMethodWhenReceiveValidUserUpsertRequest() {
+
+        // Given
+        final String email = "email@email.com";
+
+        // When
+        userGateway.inactiveUser(email);
+
+        // Then
+        Mockito.verify(userRepository, times(1)).inactiveUser(email);
+    }
+
     private UserUpsertRequest mockUserUpsertRequest() {
         return UserUpsertRequest.builder()
                 .firstName("Alis")

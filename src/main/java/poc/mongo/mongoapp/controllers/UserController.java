@@ -46,4 +46,13 @@ public class UserController {
 
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> inactiveUser(@RequestParam(name = "email") final String email) {
+
+        userGateway.inactiveUser(email);
+
+        return ResponseEntity.accepted().build();
+
+    }
+
 }

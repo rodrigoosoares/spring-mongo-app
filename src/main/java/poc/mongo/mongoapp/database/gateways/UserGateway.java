@@ -41,4 +41,9 @@ public class UserGateway {
         );
     }
 
+    public void inactiveUser(final String email) {
+
+        userRepository.inactiveUser(email);
+    }
+
 }

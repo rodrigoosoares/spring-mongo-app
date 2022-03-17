@@ -50,4 +50,15 @@ public class UserRepository {
         mongoOperations.updateFirst(query, update, COLLECTION_NAME);
     }
 
+    public void inactiveUser(final String email) {
+
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("email").is(email));
+
+        final Update update = new Update();
+        update.set("status", "deleted");
+
+        mongoOperations.updateFirst(query, update, COLLECTION_NAME);
+    }
+
 }

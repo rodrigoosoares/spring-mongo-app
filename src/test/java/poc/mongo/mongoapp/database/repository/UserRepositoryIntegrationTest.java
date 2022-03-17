@@ -177,6 +177,35 @@ class UserRepositoryIntegrationTest {
         assertThat(updatedDocument.getStatus(), Is.is("active"));
     }
 
+    @Test
+    @DisplayName("Should inactive user given valid email")
+    void shouldInactiveUserGivenValidEmail() {
+
+        //Given
+        mongoOperations.insert(mockData(), COLLECTION_NAME);
+
+        final String email = "user-1@email.com";
+
+        // When
+        userRepository.inactiveUser(email);
+
+        // Then
+        final List<UserEntity> updatedDocumentFind = mongoOperations.find(
+                new Query().addCriteria(Criteria.where("email").is(email)),
+                UserEntity.class,
+                COLLECTION_NAME
+        );
+
+        assertThat(updatedDocumentFind.size(), Is.is(1));
+
+        final UserEntity updatedDocument = updatedDocumentFind.get(0);
+        assertThat(updatedDocument.getFirstName(), Is.is("user1"));
+        assertThat(updatedDocument.getLastName(), Is.is("01"));
+        assertThat(updatedDocument.getEmail(), Is.is("user-1@email.com"));
+        assertThat(updatedDocument.getBirthDate(), Is.is(LocalDate.parse("2022-02-22")));
+        assertThat(updatedDocument.getStatus(), Is.is("deleted"));
+    }
+
     private List<UserEntity> mockData() {
 
         return List.of(
