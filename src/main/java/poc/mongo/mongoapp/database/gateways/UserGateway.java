@@ -7,9 +7,12 @@ import poc.mongo.mongoapp.adapters.UserEntityAdapter;
 import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.repository.UserRepository;
+import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
+import poc.mongo.mongoapp.exceptions.NotFoundException;
 import poc.mongo.mongoapp.rest.models.UserDTO;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserGateway {
@@ -21,12 +24,23 @@ public class UserGateway {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> getUsers(final String status) {
+    public List<UserDTO> getUsersByStatus(final String status) {
 
         return UserDTOAdapter.fromUserEntityList(userRepository.findUsersByStatus(status));
     }
 
-    public void insertUser(final UserUpsertRequest userUpsertRequest) {
+    public UserDTO getUserByEmail(final String email) throws NotFoundException {
+
+        final UserEntity userDTO = userRepository.findUsersByEmail(email);
+
+        if(Objects.isNull(userDTO)) {
+            throw new NotFoundException("Not found user with e-mail " + email);
+        }
+
+        return UserDTOAdapter.fromUserDTO(userDTO);
+    }
+
+    public void insertUser(final UserUpsertRequest userUpsertRequest) throws AlreadyExistentException {
 
         final UserEntity userEntity = UserEntityAdapter.fromUserUpsertRequest(userUpsertRequest);
         userEntity.setStatus("active");

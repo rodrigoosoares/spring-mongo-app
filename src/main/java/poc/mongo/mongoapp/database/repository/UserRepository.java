@@ -7,8 +7,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import poc.mongo.mongoapp.database.entities.UserEntity;
+import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class UserRepository {
@@ -31,7 +33,22 @@ public class UserRepository {
         return mongoOperations.find(query, UserEntity.class, COLLECTION_NAME);
     }
 
-    public void insert(final UserEntity userEntity) {
+    public UserEntity findUsersByEmail(final String email) {
+
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("email").is(email));
+
+        return mongoOperations.findOne(query, UserEntity.class, COLLECTION_NAME);
+    }
+
+    public void insert(final UserEntity userEntity) throws AlreadyExistentException {
+
+        final UserEntity alreadyExistentUsers = findUsersByEmail(userEntity.getEmail());
+
+        if(Objects.nonNull(alreadyExistentUsers)) {
+            throw new AlreadyExistentException("User with e-mail " + userEntity.getEmail() + " already exist.");
+        }
+
 
         mongoOperations.insert(userEntity, COLLECTION_NAME);
     }

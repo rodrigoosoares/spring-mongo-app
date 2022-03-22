@@ -1,0 +1,6 @@
+{
+  "status": 400,
+  "errors": [
+    "User with e-mail rodrigo@email.com already exist."
+  ]
+}

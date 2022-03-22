@@ -10,7 +10,7 @@ public class UsersResponseAdapter {
 
     private UsersResponseAdapter() {}
 
-    public static UsersResponse fromUserDTO(final List<UserDTO> userDTOList) {
+    public static UsersResponse fromUserDTOList(final List<UserDTO> userDTOList) {
 
         final UsersResponse usersResponse = new UsersResponse();
 
@@ -20,7 +20,7 @@ public class UsersResponseAdapter {
 
     }
 
-    private static UserResponse fromUserDTO(final UserDTO userDTO) {
+    public static UserResponse fromUserDTO(final UserDTO userDTO) {
 
         final UserResponse userResponse = new UserResponse();
 

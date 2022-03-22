@@ -20,7 +20,7 @@ public class UserDTOAdapter {
 
     }
 
-    private static UserDTO fromUserDTO(final UserEntity userDTO) {
+    public static UserDTO fromUserDTO(final UserEntity userDTO) {
 
         final UserDTO userResponse = new UserDTO();
 

@@ -11,6 +11,7 @@ import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.database.repository.UserRepository;
+import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 import poc.mongo.mongoapp.rest.models.UserDTO;
 
 import java.time.LocalDate;
@@ -42,7 +43,7 @@ class UserGatewayTest {
         doReturn(mockUsersFromRepository()).when(userRepository).findUsersByStatus(status);
 
         // When
-        final List<UserDTO> result = userGateway.getUsers(status);
+        final List<UserDTO> result = userGateway.getUsersByStatus(status);
 
         // Then
         Mockito.verify(userRepository, times(1)).findUsersByStatus(status);
@@ -57,7 +58,7 @@ class UserGatewayTest {
 
     @Test
     @DisplayName("Should call repository insert method when receive valid UserUpsertRequest")
-    void shouldCallRepositoryUpsertMethodWhenReceiveValidUserUpsertRequest() {
+    void shouldCallRepositoryUpsertMethodWhenReceiveValidUserUpsertRequest() throws AlreadyExistentException {
 
         // Given
         final UserUpsertRequest userUpsertRequest = mockUserUpsertRequest();

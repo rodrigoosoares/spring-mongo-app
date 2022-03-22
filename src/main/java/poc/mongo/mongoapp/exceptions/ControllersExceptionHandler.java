@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @ControllerAdvice
@@ -26,6 +27,22 @@ public class ControllersExceptionHandler {
 
         return new Issue(HttpStatus.BAD_REQUEST.value(), errors);
 
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public NotFoundResponse notFoundExceptionHandler(final NotFoundException notFoundException) {
+
+        return new NotFoundResponse(notFoundException.getExceptionMessage());
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyExistentException.class)
+    public Issue alreadyExistentExceptionHandler(final AlreadyExistentException alreadyExistentException) {
+
+        return new Issue(HttpStatus.BAD_REQUEST.value(), Collections.singletonList(alreadyExistentException.getExceptionMessage()));
     }
 
 

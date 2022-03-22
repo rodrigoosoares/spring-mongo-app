@@ -2,10 +2,7 @@ package poc.mongo.mongoapp.database.repository;
 
 import org.hamcrest.core.Is;
 import org.junit.ClassRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -15,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import poc.mongo.mongoapp.database.entities.UserEntity;
+import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 
 import java.io.File;
 import java.time.Duration;
@@ -23,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("integration-test")
@@ -111,8 +110,27 @@ class UserRepositoryIntegrationTest {
     }
 
     @Test
+    @DisplayName("Should find data given a valid email")
+    void shouldFindDataGivenAValidEmail() {
+
+        //Given
+        mongoOperations.insert(mockData(), COLLECTION_NAME);
+        final String email = "user-3@email.com";
+
+        // When
+        final UserEntity result = userRepository.findUsersByEmail(email);
+
+        // Then
+        assertThat(result.getFirstName(), Is.is("user3"));
+        assertThat(result.getLastName(), Is.is("03"));
+        assertThat(result.getEmail(), Is.is("user-3@email.com"));
+        assertThat(result.getBirthDate(), Is.is(LocalDate.parse("2022-02-24")));
+        assertThat(result.getStatus(), Is.is("deleted"));
+    }
+
+    @Test
     @DisplayName("Should insert given new valid UserEntity")
-    void shouldInsertGivenNewValidUserEntity() {
+    void shouldInsertGivenNewValidUserEntity() throws AlreadyExistentException {
 
         //Given
         mongoOperations.insert(mockData(), COLLECTION_NAME);
@@ -142,6 +160,23 @@ class UserRepositoryIntegrationTest {
         assertThat(updatedDocument.getEmail(), Is.is("user-5@email.com"));
         assertThat(updatedDocument.getBirthDate(), Is.is(LocalDate.parse("2022-01-22")));
         assertThat(updatedDocument.getStatus(), Is.is("active"));
+    }
+
+    @Test
+    @DisplayName("Should thrown AlreadyExistentException when trying to insert a existent user")
+    void shouldThrownAlreadyExistentExceptionWhenTryingToInsertAExistentUser() {
+
+        //Given
+        mongoOperations.insert(mockData(), COLLECTION_NAME);
+
+        final UserEntity userEntityToInsert = new UserEntity();
+        userEntityToInsert.setFirstName("user6");
+        userEntityToInsert.setLastName("06");
+        userEntityToInsert.setEmail("user-1@email.com");
+        userEntityToInsert.setBirthDate(LocalDate.parse("2022-01-12"));
+
+        // When/Then
+        assertThrows(AlreadyExistentException.class, () -> userRepository.insert(userEntityToInsert));
     }
 
     @Test
