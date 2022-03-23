@@ -14,7 +14,8 @@ import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 import poc.mongo.mongoapp.exceptions.NotFoundException;
-import poc.mongo.mongoapp.rest.models.UserDTO;
+import poc.mongo.mongoapp.rest.models.Pagination;
+import poc.mongo.mongoapp.rest.models.User;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -73,6 +74,29 @@ class UserControllerIntegrationTest {
                         .param("status", invalidStatus)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
+                .andDo(result -> assertResponse(result.getResponse().getContentAsString(), expectedResponse));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"active", "deleted"})
+    @DisplayName("GET /user/users/pageable - Should return all users filtered by status, when receive a valid status parameter")
+    void shouldReturnAllUsersFilteredByStatusWhenReceiveAValidStatusAndPaginationParameters(final String statusArg) throws Exception {
+
+        // Given
+        final Pagination pagination = new Pagination();
+        pagination.setPage(1);
+        pagination.setSize(3);
+        doReturn(mockUsersFromGateway()).when(userGateway).getUsersByStatusPageable(statusArg, pagination);
+
+        final String expectedResponse = loadJson(RESPONSE_PATH + "success-get-users-with-pagination.json");
+
+        // When/Then
+        mvc.perform(get("/user/users/pageable")
+                        .param("status", statusArg)
+                        .param("page", pagination.getPage().toString())
+                        .param("size", pagination.getSize().toString())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(result -> assertResponse(result.getResponse().getContentAsString(), expectedResponse));
     }
 
@@ -185,10 +209,10 @@ class UserControllerIntegrationTest {
         Mockito.verify(userGateway, times(1)).inactiveUser(email);
     }
 
-    private List<UserDTO> mockUsersFromGateway() {
+    private List<User> mockUsersFromGateway() {
 
         return Collections.singletonList(
-                UserDTO.builder()
+                User.builder()
                     .firstName("Alis")
                     .lastName("Landale")
                     .email("alis@email.com")
@@ -197,9 +221,9 @@ class UserControllerIntegrationTest {
                     .build());
     }
 
-    private UserDTO mockUserFromGateway() {
+    private User mockUserFromGateway() {
 
-        return UserDTO.builder()
+        return User.builder()
                 .firstName("Alis")
                 .lastName("Landale")
                 .email("alis@email.com")

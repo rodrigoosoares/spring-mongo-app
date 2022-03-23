@@ -2,6 +2,7 @@ package poc.mongo.mongoapp.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,6 +45,14 @@ public class ControllersExceptionHandler {
     public Issue missingRequestHeaderExceptionHandler(final MissingRequestHeaderException missingRequestHeaderException) {
 
         return new Issue(HttpStatus.BAD_REQUEST.value(), Collections.singletonList(missingRequestHeaderException.getMessage()));
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Issue missingServletRequestParameterExceptionHandler(final MissingServletRequestParameterException missingServletRequestParameterException) {
+
+        return new Issue(HttpStatus.BAD_REQUEST.value(), Collections.singletonList(missingServletRequestParameterException.getMessage()));
     }
 
     @ResponseBody

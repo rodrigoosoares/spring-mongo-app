@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
+import poc.mongo.mongoapp.rest.models.Pagination;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,17 @@ public class UserRepository {
 
         final Query query = new Query();
         query.addCriteria(Criteria.where("status").is(status));
+
+        return mongoOperations.find(query, UserEntity.class, COLLECTION_NAME);
+    }
+
+    public List<UserEntity> findUsersByStatus(final String status, final Pagination pagination) {
+
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("status").is(status));
+
+        query.limit(pagination.getSize());
+        query.skip((long) pagination.getPage() * pagination.getSize());
 
         return mongoOperations.find(query, UserEntity.class, COLLECTION_NAME);
     }

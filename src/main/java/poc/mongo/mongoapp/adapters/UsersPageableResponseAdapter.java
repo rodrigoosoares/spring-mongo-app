@@ -1,22 +1,24 @@
 package poc.mongo.mongoapp.adapters;
 
 import poc.mongo.mongoapp.controllers.responses.UserResponse;
-import poc.mongo.mongoapp.controllers.responses.UsersResponse;
+import poc.mongo.mongoapp.controllers.responses.UsersPageableResponse;
+import poc.mongo.mongoapp.rest.models.Pagination;
 import poc.mongo.mongoapp.rest.models.User;
 
 import java.util.List;
 
-public class UsersResponseAdapter {
+public class UsersPageableResponseAdapter {
 
-    private UsersResponseAdapter() {}
+    private UsersPageableResponseAdapter() {}
 
-    public static UsersResponse fromUserDTOList(final List<User> userList) {
+    public static UsersPageableResponse fromUserDTOList(final List<User> userList, final Pagination pagination) {
 
-        final UsersResponse usersResponse = new UsersResponse();
+        final UsersPageableResponse usersPageableResponse = new UsersPageableResponse();
 
-        userList.forEach(userDTO -> usersResponse.getUsers().add(fromUserDTO(userDTO)));
+        userList.forEach(userDTO -> usersPageableResponse.getUsers().add(fromUserDTO(userDTO)));
+        usersPageableResponse.setPagination(pagination);
 
-        return usersResponse;
+        return usersPageableResponse;
 
     }
 

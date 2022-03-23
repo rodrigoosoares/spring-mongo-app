@@ -13,6 +13,7 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
+import poc.mongo.mongoapp.rest.models.Pagination;
 
 import java.io.File;
 import java.time.Duration;
@@ -106,6 +107,38 @@ class UserRepositoryIntegrationTest {
         assertThat(secondEntity.getLastName(), Is.is("04"));
         assertThat(secondEntity.getEmail(), Is.is("user-4@email.com"));
         assertThat(secondEntity.getBirthDate(), Is.is(LocalDate.parse("2022-02-25")));
+        assertThat(secondEntity.getStatus(), Is.is("deleted"));
+    }
+
+    @Test
+    @DisplayName("Should find data given valid status and pagination info")
+    void shouldFindDataGivenValidStatusAndPaginationInfo() {
+
+        //Given
+        mongoOperations.insert(mockData(), COLLECTION_NAME);
+        final String status = "deleted";
+        final Pagination pagination = new Pagination();
+        pagination.setPage(1);
+        pagination.setSize(2);
+
+        // When
+        final List<UserEntity> result = userRepository.findUsersByStatus(status, pagination);
+
+        // Then
+        assertThat(result.size(), Is.is(2));
+
+        final UserEntity firstEntity = result.get(0);
+        assertThat(firstEntity.getFirstName(), Is.is("user7"));
+        assertThat(firstEntity.getLastName(), Is.is("07"));
+        assertThat(firstEntity.getEmail(), Is.is("user-7@email.com"));
+        assertThat(firstEntity.getBirthDate(), Is.is(LocalDate.parse("2022-02-26")));
+        assertThat(firstEntity.getStatus(), Is.is("deleted"));
+
+        final UserEntity secondEntity = result.get(1);
+        assertThat(secondEntity.getFirstName(), Is.is("user8"));
+        assertThat(secondEntity.getLastName(), Is.is("08"));
+        assertThat(secondEntity.getEmail(), Is.is("user-8@email.com"));
+        assertThat(secondEntity.getBirthDate(), Is.is(LocalDate.parse("2022-02-27")));
         assertThat(secondEntity.getStatus(), Is.is("deleted"));
     }
 
@@ -247,7 +280,10 @@ class UserRepositoryIntegrationTest {
                 new UserEntity("user1", "01", "user-1@email.com", LocalDate.parse("2022-02-22"), "active"),
                 new UserEntity("user2", "02", "user-2@email.com", LocalDate.parse("2022-02-23"), "active"),
                 new UserEntity("user3", "03", "user-3@email.com", LocalDate.parse("2022-02-24"), "deleted"),
-                new UserEntity("user4", "04", "user-4@email.com", LocalDate.parse("2022-02-25"), "deleted")
+                new UserEntity("user4", "04", "user-4@email.com", LocalDate.parse("2022-02-25"), "deleted"),
+                new UserEntity("user7", "07", "user-7@email.com", LocalDate.parse("2022-02-26"), "deleted"),
+                new UserEntity("user8", "08", "user-8@email.com", LocalDate.parse("2022-02-27"), "deleted"),
+                new UserEntity("user9", "09", "user-9@email.com", LocalDate.parse("2022-02-28"), "deleted")
         );
 
 

@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import poc.mongo.mongoapp.adapters.UsersPageableResponseAdapter;
 import poc.mongo.mongoapp.adapters.UsersResponseAdapter;
 import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.controllers.responses.UserResponse;
+import poc.mongo.mongoapp.controllers.responses.UsersPageableResponse;
 import poc.mongo.mongoapp.controllers.responses.UsersResponse;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 import poc.mongo.mongoapp.exceptions.BadRequestException;
 import poc.mongo.mongoapp.exceptions.NotFoundException;
+import poc.mongo.mongoapp.rest.models.Pagination;
 import poc.mongo.mongoapp.validation.StatusValidation;
 
 import static poc.mongo.mongoapp.commons.HeadersConstants.TRACE_ID;
@@ -34,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/users")
-    public ResponseEntity<UsersResponse> getAllUsers(@RequestHeader(name = TRACE_ID) final String traceId,
+    public ResponseEntity<UsersResponse> getAllUsersByStatus(@RequestHeader(name = TRACE_ID) final String traceId,
                                                      @RequestParam(defaultValue = "active") @StatusValidation final String status) {
 
         LOG.info("GET - Start request for get users by status {}", status);
@@ -42,6 +45,26 @@ public class UserController {
         final UsersResponse usersResponse = UsersResponseAdapter.fromUserDTOList(userGateway.getUsersByStatus(status));
 
         LOG.info("GET - Finish request for get users by status {}", status);
+
+        return ResponseEntity.ok(usersResponse);
+    }
+
+    @GetMapping(path = "/users/pageable")
+    public ResponseEntity<UsersPageableResponse> getAllUsersByStatusPageable(@RequestHeader(name = TRACE_ID) final String traceId,
+                                                                             @RequestParam final Integer page,
+                                                                             @RequestParam final Integer size,
+                                                                             @RequestParam(defaultValue = "active") @StatusValidation final String status) {
+
+        LOG.info("GET - Start request for get users by status {}, page {}, size {}", status, page, size);
+
+        final Pagination pagination = new Pagination(page, size);
+
+        final UsersPageableResponse usersResponse = UsersPageableResponseAdapter.fromUserDTOList(
+                userGateway.getUsersByStatusPageable(status, pagination),
+                pagination
+        );
+
+        LOG.info("GET - Finish request for get users by status {}, page {}, size {}", status, page, size);
 
         return ResponseEntity.ok(usersResponse);
     }

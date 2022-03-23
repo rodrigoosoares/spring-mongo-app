@@ -12,7 +12,8 @@ import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.database.repository.UserRepository;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
-import poc.mongo.mongoapp.rest.models.UserDTO;
+import poc.mongo.mongoapp.rest.models.Pagination;
+import poc.mongo.mongoapp.rest.models.User;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -43,10 +44,34 @@ class UserGatewayTest {
         doReturn(mockUsersFromRepository()).when(userRepository).findUsersByStatus(status);
 
         // When
-        final List<UserDTO> result = userGateway.getUsersByStatus(status);
+        final List<User> result = userGateway.getUsersByStatus(status);
 
         // Then
         Mockito.verify(userRepository, times(1)).findUsersByStatus(status);
+
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).getFirstName(), is("Alis"));
+        assertThat(result.get(0).getLastName(), is("Landale"));
+        assertThat(result.get(0).getBirthDate(), is(LocalDate.parse("1987-12-20")));
+        assertThat(result.get(0).getStatus(), is("Active"));
+
+    }
+
+    @Test
+    @DisplayName("Should return a list of users from repository with pagination")
+    void shouldReturnListOfUsersFromRepositoryWithPagination() {
+
+        // Given
+        final String status = "status";
+        final Pagination pagination = new Pagination(1, 1);
+
+        doReturn(mockUsersFromRepository()).when(userRepository).findUsersByStatus(status, pagination);
+
+        // When
+        final List<User> result = userGateway.getUsersByStatusPageable(status, pagination);
+
+        // Then
+        Mockito.verify(userRepository, times(1)).findUsersByStatus(status, pagination);
 
         assertThat(result.size(), is(1));
         assertThat(result.get(0).getFirstName(), is("Alis"));

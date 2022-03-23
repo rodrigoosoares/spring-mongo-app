@@ -2,14 +2,15 @@ package poc.mongo.mongoapp.database.gateways;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import poc.mongo.mongoapp.adapters.UserDTOAdapter;
+import poc.mongo.mongoapp.adapters.UserAdapter;
 import poc.mongo.mongoapp.adapters.UserEntityAdapter;
 import poc.mongo.mongoapp.controllers.requests.UserUpsertRequest;
 import poc.mongo.mongoapp.database.entities.UserEntity;
 import poc.mongo.mongoapp.database.repository.UserRepository;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
 import poc.mongo.mongoapp.exceptions.NotFoundException;
-import poc.mongo.mongoapp.rest.models.UserDTO;
+import poc.mongo.mongoapp.rest.models.Pagination;
+import poc.mongo.mongoapp.rest.models.User;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,12 +25,22 @@ public class UserGateway {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> getUsersByStatus(final String status) {
+    public List<User> getUsersByStatus(final String status) {
 
-        return UserDTOAdapter.fromUserEntityList(userRepository.findUsersByStatus(status));
+        final List<UserEntity> userEntities = userRepository.findUsersByStatus(status);
+
+        return UserAdapter.fromUserEntityList(userEntities);
     }
 
-    public UserDTO getUserByEmail(final String email) throws NotFoundException {
+    public List<User> getUsersByStatusPageable(final String status, final Pagination pagination) {
+
+        final List<UserEntity> userEntities = userRepository.findUsersByStatus(status, pagination);
+
+        return UserAdapter.fromUserEntityList(userEntities);
+
+    }
+
+    public User getUserByEmail(final String email) throws NotFoundException {
 
         final UserEntity userDTO = userRepository.findUsersByEmail(email);
 
@@ -37,7 +48,7 @@ public class UserGateway {
             throw new NotFoundException("Not found user with e-mail " + email);
         }
 
-        return UserDTOAdapter.fromUserDTO(userDTO);
+        return UserAdapter.fromUserDTO(userDTO);
     }
 
     public void insertUser(final UserUpsertRequest userUpsertRequest) throws AlreadyExistentException {

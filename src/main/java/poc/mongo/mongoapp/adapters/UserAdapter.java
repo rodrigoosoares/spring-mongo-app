@@ -1,18 +1,18 @@
 package poc.mongo.mongoapp.adapters;
 
 import poc.mongo.mongoapp.database.entities.UserEntity;
-import poc.mongo.mongoapp.rest.models.UserDTO;
+import poc.mongo.mongoapp.rest.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDTOAdapter {
+public class UserAdapter {
 
-    private UserDTOAdapter() {}
+    private UserAdapter() {}
 
-    public static List<UserDTO> fromUserEntityList(final List<UserEntity> userEntityList) {
+    public static List<User> fromUserEntityList(final List<UserEntity> userEntityList) {
 
-        final List<UserDTO> usersDTO = new ArrayList<>();
+        final List<User> usersDTO = new ArrayList<>();
 
         userEntityList.forEach(userEntity -> usersDTO.add(fromUserDTO(userEntity)));
 
@@ -20,9 +20,9 @@ public class UserDTOAdapter {
 
     }
 
-    public static UserDTO fromUserDTO(final UserEntity userDTO) {
+    public static User fromUserDTO(final UserEntity userDTO) {
 
-        final UserDTO userResponse = new UserDTO();
+        final User userResponse = new User();
 
         userResponse.setFirstName(userDTO.getFirstName());
         userResponse.setLastName(userDTO.getLastName());
