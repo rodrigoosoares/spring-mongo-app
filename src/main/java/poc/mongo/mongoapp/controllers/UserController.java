@@ -12,8 +12,11 @@ import poc.mongo.mongoapp.controllers.responses.UserResponse;
 import poc.mongo.mongoapp.controllers.responses.UsersResponse;
 import poc.mongo.mongoapp.database.gateways.UserGateway;
 import poc.mongo.mongoapp.exceptions.AlreadyExistentException;
+import poc.mongo.mongoapp.exceptions.BadRequestException;
 import poc.mongo.mongoapp.exceptions.NotFoundException;
 import poc.mongo.mongoapp.validation.StatusValidation;
+
+import static poc.mongo.mongoapp.commons.HeadersConstants.TRACE_ID;
 
 @Validated
 @RestController()
@@ -26,11 +29,13 @@ public class UserController {
 
     @Autowired
     public UserController(final UserGateway userGateway) {
+
         this.userGateway = userGateway;
     }
 
     @GetMapping(path = "/users")
-    public ResponseEntity<UsersResponse> getAllUsers(@RequestParam(defaultValue = "active") @StatusValidation final String status) {
+    public ResponseEntity<UsersResponse> getAllUsers(@RequestHeader(name = TRACE_ID) final String traceId,
+                                                     @RequestParam(defaultValue = "active") @StatusValidation final String status) {
 
         LOG.info("GET - Start request for get users by status {}", status);
 
@@ -42,7 +47,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> getUserByEmail(@RequestParam final String email) throws NotFoundException {
+    public ResponseEntity<UserResponse> getUserByEmail(@RequestHeader(name = TRACE_ID) final String traceId,
+                                                       @RequestParam final String email) throws NotFoundException {
 
         LOG.info("GET - Start request for get user by email {}", email);
 
@@ -54,7 +60,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody final UserUpsertRequest userUpsertRequest) throws AlreadyExistentException {
+    public ResponseEntity<Void> createUser(@RequestHeader(name = TRACE_ID) final String traceId,
+                                           @RequestBody final UserUpsertRequest userUpsertRequest) throws AlreadyExistentException {
 
         LOG.info("POST - Start request for insert new user");
 
@@ -67,7 +74,8 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateUser(@RequestBody final UserUpsertRequest userUpsertRequest) {
+    public ResponseEntity<Void> updateUser(@RequestHeader(name = TRACE_ID) final String traceId,
+                                           @RequestBody final UserUpsertRequest userUpsertRequest) {
 
         LOG.info("PUT - Start request for update an user");
 
@@ -80,7 +88,8 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> inactiveUser(@RequestParam(name = "email") final String email) {
+    public ResponseEntity<Void> inactiveUser(@RequestHeader(name = TRACE_ID) final String traceId,
+                                             @RequestParam(name = "email") final String email) throws BadRequestException {
 
         LOG.info("DELETE - Start request for inactive the user: {}", email);
 
