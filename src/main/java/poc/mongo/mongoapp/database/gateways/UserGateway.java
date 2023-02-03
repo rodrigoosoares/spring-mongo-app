@@ -21,7 +21,8 @@ public class UserGateway {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserGateway(UserRepository userRepository) {
+    public UserGateway(final UserRepository userRepository) {
+
         this.userRepository = userRepository;
     }
 
@@ -44,7 +45,7 @@ public class UserGateway {
 
         final UserEntity userDTO = userRepository.findUsersByEmail(email);
 
-        if(Objects.isNull(userDTO)) {
+        if (Objects.isNull(userDTO)) {
             throw new NotFoundException("Not found user with e-mail " + email);
         }
 

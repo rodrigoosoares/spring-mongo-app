@@ -12,23 +12,24 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserEntity {
 
-        private ObjectId id;
+    private ObjectId id;
 
-        private String firstName;
+    private String firstName;
 
-        private String lastName;
+    private String lastName;
 
-        private String email;
+    private String email;
 
-        private LocalDate birthDate;
+    private LocalDate birthDate;
 
-        private String status;
+    private String status;
 
-        public UserEntity(String firstName, String lastName, String email, LocalDate birthDate, String status) {
-                this.firstName = firstName;
-                this.lastName = lastName;
-                this.email = email;
-                this.birthDate = birthDate;
-                this.status = status;
-        }
+    public UserEntity(final String firstName, final String lastName, final String email, final LocalDate birthDate, final String status) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.status = status;
+    }
 }
